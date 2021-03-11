@@ -7,6 +7,13 @@ $popula_tabela = $conexao_pdo->prepare("SELECT * FROM LICITANET_PROVIDER where i
 $popula_tabela->execute();
 $popula_tabela_result = $popula_tabela->rowCount();
 
+if (isset($_POST['search'])) {
+    $busca = $_POST['search']; 
+    $popula_tabela = $conexao_pdo->prepare("SELECT * FROM LICITANET_PROVIDER where id_company=" . $_SESSION['id_company'] . " AND name LIKE '$busca' OR cpf_cnpj LIKE '$busca';");
+    $popula_tabela->execute();
+    $popula_tabela_result = $popula_tabela->rowCount();
+}
+
 // FUNÇÃO DE DELETAR FORNECEDOR
 if (isset($_POST['delete'])) {
     $id_deletar = $_POST['delete'];
@@ -21,15 +28,23 @@ if (isset($_POST['name']) && isset($_POST['cpf']) && isset($_POST['rg']) && isse
     if (($_SESSION['uf_company'] = 'PA' && $_POST['idade'] <= 17) || (isset($_POST['pessoa_fisica']) && (!$_POST['rg'] || !$_POST['birthdate']))) {
         echo '<script>alert("Não foi possivel criar o fornecedor!");</script>';
     } else {
-        if (!$_POST['rg']){$rg = 'null';}else{$rg = $_POST['rg'];}
-        if (!$_POST['birthdate']){$birthdate = 'null';}else{$birthdate = $_POST['birthdate'];}
+        if (!$_POST['rg']) {
+            $rg = 'null';
+        } else {
+            $rg = $_POST['rg'];
+        }
+        if (!$_POST['birthdate']) {
+            $birthdate = 'null';
+        } else {
+            $birthdate = $_POST['birthdate'];
+        }
 
         $id_company = $_SESSION['id_company'];
         $name = $_POST['name'];
         $cpf = $_POST['cpf'];
         $idade = $_POST['idade'];
         $telephone = $_POST['telephone'];
-        
+
         $criar_fornecedor = $conexao_pdo->prepare("INSERT INTO LICITANET_PROVIDER (id_company,name,cpf_cnpj,rg,idade,birthdate,telephone)
         values(
         $id_company,
@@ -52,15 +67,18 @@ if (isset($_POST['name']) && isset($_POST['cpf']) && isset($_POST['rg']) && isse
     <h1><span class="iconify" data-icon="map:moving-company" data-inline="false"></span> Fornecedores </h1>
 
     <div style="display: flex; justify-content: flex-end">
-        <form>
-            <div class="form-row align-items-center">
-                <div class="col-auto">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
-                        Criar Fornecedor
-                    </button>
-                </div>
+        <form class="form-inline" method="POST">
+            <div class="form-group mb-2">
+                <label for="staticEmail2" class="sr-only">Email</label>
+                <input type="text" name="search" readonly class="form-control-plaintext" id="staticEmail2" value="">
             </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="inputPassword2" class="sr-only">Password</label>
+                <input type="text" name="search" class="form-control" id="inputPassword2" placeholder="Busca nome/cpf">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 mr-2">Buscar</button>  <button type="button" data-toggle="modal" data-target="#createModal" class="btn btn-success mb-2">Criar Fornecedor</button>
         </form>
+
     </div>
     <table class="m-4 table table-sm table-dark mt-4">
         <thead>
