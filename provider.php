@@ -1,6 +1,6 @@
 <?php
-include_once('./connector.php');
-include_once('./Navbar.php');
+include_once('./requeriments/connector.php');
+include_once('./requeriments/Navbar.php');
 session_start();
 
 $popula_tabela = $conexao_pdo->prepare("SELECT * FROM LICITANET_PROVIDER where id_company=" . $_SESSION['id_company'] . ";");
@@ -171,5 +171,5 @@ if (isset($_POST['name']) && isset($_POST['cpf']) && isset($_POST['rg']) && isse
     </div>
 </div>
 <?php
-include_once('./Footer.php')
+include_once('./requeriments/Footer.php')
 ?>
